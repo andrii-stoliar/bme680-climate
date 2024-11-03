@@ -1,0 +1,7 @@
+../Core/Src/i2c.c:10:6:MX_I2C1_Init	4
+../Core/Src/i2c.c:54:19:I2C_WriteByte	1
+../Core/Src/i2c.c:59:19:I2C_WriteMulti	1
+../Core/Src/i2c.c:64:19:I2C_ReadByte	1
+../Core/Src/i2c.c:69:19:I2C_ReadMulti	1
+../Core/Src/i2c.c:73:6:HAL_I2C_MspInit	2
+../Core/Src/i2c.c:107:6:HAL_I2C_MspDeInit	2

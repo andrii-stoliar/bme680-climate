@@ -1,0 +1,4 @@
+../Core/Src/bme680.c:18:19:BME680_Init	8
+../Core/Src/bme680.c:75:19:BME680_ReadTemperature	3
+../Core/Src/bme680.c:103:19:BME680_ReadPressure	1
+../Core/Src/bme680.c:108:19:BME680_ReadHumidity	1

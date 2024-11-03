@@ -1,0 +1,4 @@
+../Core/Src/bme680.c:18:19:BME680_Init	200	static
+../Core/Src/bme680.c:75:19:BME680_ReadTemperature	48	static
+../Core/Src/bme680.c:103:19:BME680_ReadPressure	16	static
+../Core/Src/bme680.c:108:19:BME680_ReadHumidity	16	static

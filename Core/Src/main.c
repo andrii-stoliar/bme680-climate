@@ -21,6 +21,11 @@
 #include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
+#include "bme680.h"
+#include <stdio.h>
+#include <string.h>
+
+float temperature, pressure, humidity;
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -91,17 +96,37 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Starting BME680 Initialization\n", 31, HAL_MAX_DELAY);
+  if (BME680_Init() == HAL_OK) {
+      HAL_UART_Transmit(&huart2, (uint8_t *)"BME680 Initialized Successfully\n", 33, HAL_MAX_DELAY);
+  } else {
+      HAL_UART_Transmit(&huart2, (uint8_t *)"BME680 Initialization Failed\n", 29, HAL_MAX_DELAY);
+      Error_Handler();  // LED will start blinking here
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+  while (1) {
+          // Read Temperature from BME680 Sensor
+          if (BME680_ReadTemperature(&temperature) == HAL_OK) {
+              // Sanity check for temperature range (assuming the sensor works between -40 to +85 degrees Celsius)
+              if (temperature > -40.0f && temperature < 85.0f) {
+            	  int temp_int = (int)temperature;  // Integer part
+            	  int temp_frac = (int)((temperature - temp_int) * 100);  // Fractional part (2 decimal places)
 
-    /* USER CODE BEGIN 3 */
-  }
+            	  char msg[50];
+            	  sprintf(msg, "Temperature: %d.%02d C\r\n", temp_int, temp_frac);
+            	  HAL_UART_Transmit(&huart2, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);
+              } else {
+                  HAL_UART_Transmit(&huart2, (uint8_t *)"Invalid temperature value\r\n", 26, HAL_MAX_DELAY);
+              }
+          } else {
+              HAL_UART_Transmit(&huart2, (uint8_t *)"Failed to read temperature\r\n", 27, HAL_MAX_DELAY);
+          }
+
+          HAL_Delay(1000); // 1-second delay between readings
+      }
   /* USER CODE END 3 */
 }
 
@@ -156,15 +181,15 @@ void SystemClock_Config(void)
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+void Error_Handler(void) {
+    // Stay here if an error occurs
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+	    // Stay here if an error occurs
+	    while (1) {
+	        // Toggle the LED to indicate an error
+	        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	        HAL_Delay(500); // 500 ms delay for blinking
+	    }
 }
 
 #ifdef  USE_FULL_ASSERT

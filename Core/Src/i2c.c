@@ -1,23 +1,3 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file    i2c.c
-  * @brief   This file provides code for the configuration
-  *          of the I2C instances.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
@@ -70,6 +50,26 @@ void MX_I2C1_Init(void)
 
 }
 
+// Single byte write
+HAL_StatusTypeDef I2C_WriteByte(uint16_t DevAddress, uint8_t RegAddress, uint8_t Data) {
+    return HAL_I2C_Mem_Write(&hi2c1, DevAddress, RegAddress, I2C_MEMADD_SIZE_8BIT, &Data, 1, HAL_MAX_DELAY);
+}
+
+// Multi-byte write
+HAL_StatusTypeDef I2C_WriteMulti(uint16_t DevAddress, uint8_t RegAddress, uint8_t *Data, uint16_t Size) {
+    return HAL_I2C_Mem_Write(&hi2c1, DevAddress, RegAddress, I2C_MEMADD_SIZE_8BIT, Data, Size, HAL_MAX_DELAY);
+}
+
+// Single byte read
+HAL_StatusTypeDef I2C_ReadByte(uint16_t DevAddress, uint8_t RegAddress, uint8_t *pData) {
+    return HAL_I2C_Mem_Read(&hi2c1, DevAddress, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, 1, HAL_MAX_DELAY);
+}
+
+// Multi-byte read
+HAL_StatusTypeDef I2C_ReadMulti(uint16_t DevAddress, uint8_t RegAddress, uint8_t *pData, uint16_t Size) {
+    return HAL_I2C_Mem_Read(&hi2c1, DevAddress, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, Size, HAL_MAX_DELAY);
+}
+
 void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
 {
 
@@ -113,7 +113,7 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 
   /* USER CODE END I2C1_MspDeInit 0 */
     /* Peripheral clock disable */
-    __HAL_RCC_I2C1_CLK_DISABLE();
+    __HAL_RCC_I2C1_CLK_ENABLE();
 
     /**I2C1 GPIO Configuration
     PB6     ------> I2C1_SCL
@@ -130,7 +130,3 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   /* USER CODE END I2C1_MspDeInit 1 */
   }
 }
-
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
